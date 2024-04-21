@@ -1,0 +1,15 @@
+<template>
+    
+    <template for:each={getData.data} for:item="getData">
+
+
+        
+        <div key={getData.Id}>
+
+            <c-get-Data-From-Apex-Controller record-id={getData.Contact__r.Id}></c-get-Data-From-Apex-Controller>
+    </div>
+
+
+
+    </template>
+</template>
