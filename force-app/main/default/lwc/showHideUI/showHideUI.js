@@ -1,11 +1,12 @@
-import { LightningElement } from 'lwc';
+import { LightningElement,api} from 'lwc';
 
 export default class ShowHideUI extends LightningElement 
 
 {
-    showData=false;
+    @api showData=false;
     showDataPart=true;
-    handleData(event)
+
+   @api  handleData(event)
     {
         this.showData=event.target.checked
 
