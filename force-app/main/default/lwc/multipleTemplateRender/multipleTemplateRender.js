@@ -8,6 +8,9 @@ export default class MultipleTemplateRender extends LightningElement
 {
 
     selected;
+    firstName;
+    password;
+    emailValue;
 
     render()
     {
@@ -23,16 +26,41 @@ export default class MultipleTemplateRender extends LightningElement
 
         console.log(this.selected);
     }
+    getFirstName(event)
+    {
+        this.firstName=event.target.value;
+        console.log(this.firstName);
 
+    }
+    getPassowrd(event)
+    {
+        this.password=event.target.value;
+    }
+    getEmail(event)
+    {
+        this.emailValue=event.target.value;
+    }
     sumbitHandler(event)
     {
         if(event.target.label=='Sign In')
         {
+            this.password=this.template.querySelector('lightning-input[data-field="passwordValue"').value
+            this.emailValue=this.template.querySelector('lightning-input[data-field="emailValue"').value
+
             console.log('Sign In Sucesfully');
+            console.log( this.password);
+            console.log( this.emailValue);
+
+
         }
         else if(event.target.label=='Sign UP')
         {
             console.log('Sign Up Sucessfully');
+            console.log(this.firstName);
+            console.log(this.password);
+            console.log(this.emailValue);
+
+
         }
         else
         {

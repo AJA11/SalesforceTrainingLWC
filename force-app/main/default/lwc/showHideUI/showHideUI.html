@@ -1,0 +1,24 @@
+<template>
+    <lightning-card>
+        <div>
+    <lightning-input type="checkbox" label="Show Data" onchange={handleData}></lightning-input>
+</div>
+    </lightning-card>
+
+    <template lwc:if={showData}>
+        <h1>If Condition</h1>
+
+    </template>
+    <template lwc:elseif={showDataPart}>
+        <h1>else If Condition</h1>
+
+    </template>
+    <template lwc:else>
+        <h1>else consdition</h1>
+
+    </template>
+    
+    <!-- <template if:false={showData}>
+        <h1>'Data is in Encrypt Form'</h1>
+    </template> -->
+</template>
