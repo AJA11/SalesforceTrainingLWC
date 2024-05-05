@@ -1,0 +1,23 @@
+.alert
+{
+    padding:20px;
+    background-color: brown;
+    color: white;
+    opacity:1;
+    transition: opacity 0.6s;
+    margin-bottom: 15px;
+}
+
+
+.alert.info
+{
+    background-color: red;
+}
+.alert.success
+{
+    background-color: green;
+}
+.alert.warn{
+    background-color: yellowgreen;
+
+}
