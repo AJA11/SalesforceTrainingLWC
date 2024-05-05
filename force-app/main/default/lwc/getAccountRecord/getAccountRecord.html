@@ -1,0 +1,37 @@
+<template>
+    
+<lightning-input label="Account Name" data-field="nameValue"></lightning-input>
+<lightning-input label="Phone" data-field="phoneValue" type ="number"></lightning-input>
+
+<lightning-button label="Insert" onclick={inserRecord} variant="success" ></lightning-button>
+
+    <lightning-card title="Get Account Data">
+
+    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-label="Example table of Opportunities with vertical borders">
+        <thead>
+        <tr class="slds-line-height_reset">
+        <th class="" scope="col">
+        <div class="slds-truncate" title="Account Name">Account Name</div>
+    </th>
+        <th class="" scope="col">
+        <div class="slds-truncate" title="Phone">Phone</div>
+        </th>
+        </tr>
+        </thead>
+        <tbody>
+
+            <template for:each={getDataFromAccount} for:item="accountDat">
+        <tr class="slds-hint-parent" key={accountDat.Id}>
+
+        <td data-label="Account Name">
+        <div class="slds-truncate" title="Account Name">{accountDat.Name}</div>
+        </td>
+        <td data-label="Close Date">
+        <div class="slds-truncate" title="Phone">{accountDat.Phone}</div>
+        </td>
+        </tr>
+    </template>
+        </tbody>
+        </table>
+    </lightning-card>
+</template>
