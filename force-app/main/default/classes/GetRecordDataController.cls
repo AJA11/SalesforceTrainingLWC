@@ -47,8 +47,34 @@ public with sharing class GetRecordDataController
     }
 
 
+     
+    @AuraEnabled
+    public static void updateAccountData(WrapperClass getData)
+    {
+
+        List<Account> getAccount=[Select Id, Name,Phone From Account WHERE Id=:getData.accountId];
+        try
+        {
+        // Account getField=new Account();
+
+        getAccount[0].Name=getData.accountName;
+        getAccount[0].Phone=getData.phoneNumber;
+        
+        update getField;
+    }
+    catch(Exception ex)
+    {
+        throw new AuraHandledException(ex.getMessage());
+    }
+
+
+    }
+
     public class WrapperClass
     {
+
+        @AuraEnabled
+        public string accountId {get;set;}
         @AuraEnabled
         public string accountName {get;set;}
 
