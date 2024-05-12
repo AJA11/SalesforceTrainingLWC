@@ -52,7 +52,7 @@ public with sharing class GetRecordDataController
     public static void updateAccountData(WrapperClass getData)
     {
 
-        List<Account> getAccount=[Select Id, Name,Phone From Account WHERE Id=:getData.accountId];
+        // List<Account> getAccount=[Select Id, Name,Phone From Account WHERE Id=:getData.accountId];
         try
         {
         // Account getField=new Account();
