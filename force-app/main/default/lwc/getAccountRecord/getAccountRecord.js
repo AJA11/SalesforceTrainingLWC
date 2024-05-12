@@ -41,9 +41,12 @@ export default class GetAccountRecord extends LightningElement
             {
                 getData:paremeterObject
             }).then(res=>
-                {
-                    refreshApex(this.accountData);
+                {                   
+                    
+                    
                     console.log(res);
+
+                    refreshApex(this.accountData);
                 })
 
     }

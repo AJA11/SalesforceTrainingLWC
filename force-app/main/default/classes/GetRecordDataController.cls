@@ -36,8 +36,7 @@ public with sharing class GetRecordDataController
 
         getField.Name=getData.accountName;
         getField.Phone=getData.phoneNumber;
-
-        insert getField;
+            insert getField;
     }
     catch(Exception ex)
     {
