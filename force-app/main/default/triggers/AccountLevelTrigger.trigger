@@ -4,19 +4,24 @@ trigger AccountLevelTrigger on Account (before insert,before update,after insert
 {
 
 
-    if(Trigger.isInsert)
+    if(Trigger.isUpdate)
     {
 
-        Integer recordCount=Trigger.new.size();
-        List<String> address=new List<String>();
-    address.add('ajaysethi184@gmail.com');
-    address.add('chhabra.aman26@gmail.com');
-    address.add('luckyindorkar.sfdc@gmail.com');
+        // Integer recordCount=Trigger.new.size();
+      
+        //     EmailService.emailTriggerHelper(recordCount);
 
-        String subject='Trigger Testing';
-        String body='Total Account Inserted '+ recordCount;
-        EmailService.sendEmail(address, subject, body);
-     
+
+
+            if(trigger.isAfter)
+            {
+                if(!preventRecursion.firstCall)
+                {
+                    preventRecursion.firstCall=true;
+                    EmailService.updateAccount(Trigger.new,Trigger.oldMap);
+
+                }
+            }
 
         
     }
