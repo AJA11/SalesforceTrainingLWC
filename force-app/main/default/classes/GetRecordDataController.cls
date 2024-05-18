@@ -70,6 +70,11 @@ public with sharing class GetRecordDataController
 
     }
 
+
+    public static void undeleteMethod()
+    {
+        
+    }
     public class WrapperClass
     {
 

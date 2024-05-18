@@ -1,0 +1,19 @@
+<template>
+    
+    <lightning-card title="Parent Component Dat to child on a action">
+
+<div>
+    <lightning-input label="Percentage" type="number" min="0" max="100" onkeyup={changeHandler} value={percentage}></lightning-input>
+</div>
+
+
+
+<div>
+
+    <c-action-Child-Component percentage={percentage}></c-action-Child-Component>
+</div>
+
+
+
+    </lightning-card>
+</template>
