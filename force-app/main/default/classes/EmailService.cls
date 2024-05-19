@@ -35,7 +35,8 @@ public with sharing class EmailService {
             sendEmail(address, subject, body);
     }
 
-    public static void updateAccount(List<Account> newList,Map<Id,Account> oldMap)
+
+    public void updateAccount(List<Account> newList,Map<Id,Account> oldMap)
     {
         List<Account> accToUpdate=new List<Account>();
 

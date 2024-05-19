@@ -18,7 +18,8 @@ trigger AccountLevelTrigger on Account (before insert,before update,after insert
                 if(!preventRecursion.firstCall)
                 {
                     preventRecursion.firstCall=true;
-                    EmailService.updateAccount(Trigger.new,Trigger.oldMap);
+                    EmailService getServic=new EmailService();
+                    getServic.updateAccount(Trigger.new,Trigger.oldMap);
 
                 }
             }

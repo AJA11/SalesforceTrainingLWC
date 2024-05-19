@@ -57,10 +57,12 @@ public with sharing class GetRecordDataController
         {
         // Account getField=new Account();
 
-        getAccount[0].Name=getData.accountName;
-        getAccount[0].Phone=getData.phoneNumber;
+        Account newAcc=new Account();
+        newAcc.Id=getData.AccountId;
+        newAcc.Name=getData.accountName;
+        newAcc.Phone=getData.phoneNumber;
         
-        update getField;
+        update newAcc;
     }
     catch(Exception ex)
     {
