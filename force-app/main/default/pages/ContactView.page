@@ -1,0 +1,9 @@
+<apex:page standardController="Account" recordSetVar="contacts">
+<apex:pageBlock title="Account Details">
+    <apex:pageBlockSection >
+        <apex:outputField value="{! Account.Name }"/>
+        <apex:outputField value="{! Account.Phone }"/>
+        <apex:outputField value="{! Account.Industry }"/>
+        <apex:outputField value="{! Account.AnnualRevenue }"/>
+    </apex:pageBlockSection>
+</apex:pageBlock></apex:page>
