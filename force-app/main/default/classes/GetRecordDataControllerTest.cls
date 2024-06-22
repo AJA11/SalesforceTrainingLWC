@@ -23,30 +23,21 @@
 private class GetRecordDataControllerTest {
 
     
+
+
     @isTest
     // (SeeAllData=true)
     static void myUnitTest() {
 
-        Hotel__c insertHot=new Hotel__c(Street_Address__c='Test',State__c='Uttar Pradesh',City__c='Moradabad');
-        insert insertHot;
-        Contact insertCon=new Contact(LastName='Sethi');
-        insert insertCon;
-
-        Room__c insertRom=new Room__c(Room_Cost__c=20,Hotel__c=insertHot.Id);
-        insert insertRom;
-        Reservation__c getReserved=new Reservation__c();
-        getReserved.Room__c=insertRom.Id;
-        getReserved.Contact__c=insertCon.Id;
-
-        getReserved.Name='Test Reservation';
-        insert getReserved;
+        TestDataFactory getMethod=new TestDataFactory();
+        getMethod.setupTesDataFactory();
 
 
         Test.startTest();
         List<Reservation__c> getData=GetRecordDataController.getReservationData();
         Test.stopTest();
 
-        // System.assertEquals(1,getData.Size());
+        System.assertEquals(1,getData.Size());
         // System.assertEquals('Test Reservation',getData[0].Name);
 
 
