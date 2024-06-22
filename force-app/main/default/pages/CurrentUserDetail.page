@@ -1,0 +1,42 @@
+<apex:page >
+    
+    
+    <apex:pageBlock title="User Detail">
+   <apex:pageBlockSection title="User" columns="2">
+      {!$User.FirstName} {!$User.LastName}
+       
+       {!$User.Username}
+        </apex:pageBlockSection>
+        
+        
+        <p>
+            {! Max(1,2,5,9,11,0)}
+        </p>
+        
+          <p>
+            {! SQRT(22)}
+        </p>
+                <p>
+               {!Today()}     
+        		</p>
+        <br/>
+        
+        			{!Day(Today())}
+        
+        <br/>
+                {!Day(Today() +2)}
+
+        
+
+         <apex:pageBlockSection title="Conditions" columns="2">
+             Is it true?{!CONTAINS('Salesforce.com','.com')}
+             
+             <p>
+                 {!If(CONTAINS('Salesforce.com','fce.com'),'Yes','Nope')}
+             </p>
+             <p>
+                 {! If(Day(Today()) <  15, 'Before 15th', 'After 15th')}            </p>
+        </apex:pageBlockSection>
+        
+           </apex:pageBlock>
+</apex:page>

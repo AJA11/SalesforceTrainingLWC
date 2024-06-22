@@ -1,0 +1,34 @@
+<apex:page >
+  <style>
+
+      .test
+      {
+      color:Red;
+      }
+      
+      
+      
+      
+      
+      
+    </style>
+    
+    
+    
+    <apex:pageBlock title="My First Page">
+   <apex:pageBlockSection title="Section First">
+        <h1 class="test">
+        Testing Page
+             </h1> 
+        </apex:pageBlockSection>
+      <apex:pageBlockSection title="Section Second">
+
+    <p>
+        Paragraph Test
+    </p>
+        </apex:pageBlockSection>
+     </apex:pageBlock>
+    <apex:image value="https://developer.salesforce.com/files/salesforce-developer-network-logo.png" width="400px" height="300px"/>
+    
+    
+</apex:page>
