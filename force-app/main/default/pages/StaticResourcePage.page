@@ -1,0 +1,14 @@
+<apex:page >
+    
+    <apex:includeScript value="{!$Resource.queryJava}"/>
+    <script type="text/javascript">
+    jQuery.noConflict();
+    jQuery(document).ready(function() {
+        jQuery("#message").html("From Jquery");
+    });
+    </script>
+<apex:image url="{!URLFOR($Resource.jQuery, 'images/icons-png/eye-black.png')}"/>
+
+
+
+</apex:page>

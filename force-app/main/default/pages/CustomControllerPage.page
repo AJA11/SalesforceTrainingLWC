@@ -1,0 +1,9 @@
+<apex:page controller="RetrivedList">
+    <apex:pageBlock >
+    <apex:pageBlockTable value="{!contacts}" var="cont"> 
+    <apex:column value="{!cont.Name}"/>
+    
+    
+    </apex:pageBlockTable>
+        </apex:pageBlock>
+</apex:page>
