@@ -25,6 +25,61 @@ public with sharing class GetRecordDataController
     }
 
 
+
+    @AuraEnabled
+    public static void databaseInserMethod()
+    {
+
+        try
+        {
+
+            
+            List<Account> addData=new List<Account>();
+            
+            
+            for(Integer i=0; i<12; i++)
+            {
+                Account getField=new Account();
+
+                getField.Name='Testing ' +i;
+                getField.Phone='222-2222-222' +i;
+                getField.YearStarted='201'+i;
+
+                addData.add(getField);
+            }
+            
+      
+
+        Database.SaveResult [] getListOfMessage =Database.insert(addData,false);
+        for(Database.SaveResult getMessage:getListOfMessage)
+        {
+            System.debug(getMessage);
+
+            if(getMessage.isSuccess())
+            {
+                System.debug(getMessage);
+                System.debug('Data is successfully inserted');
+            }
+            else
+            {
+                System.debug('Error Has come while inserting data');
+            for(Database.Error getError : getMessage.getErrors())
+                {
+                    System.debug('Error has come'+ getError.getFields());
+                    System.debug('Error has come'+ getError.getMessage());
+            }
+        }
+    }
+        
+    }
+    catch(Exception ex)
+    {
+        throw new AuraHandledException(ex.getMessage());
+    }
+
+
+    }
+
     
     @AuraEnabled
     public static void insertAccountData(WrapperClass getData)
@@ -36,6 +91,7 @@ public with sharing class GetRecordDataController
 
         getField.Name=getData.accountName;
         getField.Phone=getData.phoneNumber;
+        
             insert getField;
     }
     catch(Exception ex)
@@ -87,6 +143,9 @@ public with sharing class GetRecordDataController
 
         @AuraEnabled
         public string phoneNumber{get;set;}
+
+        @AuraEnabled
+        public string yearStarted{get;set;}
 
 
     }
