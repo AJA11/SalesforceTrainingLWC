@@ -31,7 +31,7 @@ Set<String> allFields=new Set<String>(getFieldMap.keySet());
 
 
 System.debug(allFields);
-
+allFields.add('Hotel__r.Name');
 return allFields;
 
    }
