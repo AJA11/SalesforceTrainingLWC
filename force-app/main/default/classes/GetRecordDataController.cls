@@ -93,6 +93,10 @@ public with sharing class GetRecordDataController
         getField.Phone=getData.phoneNumber;
         
             insert getField;
+
+            HttpRequestRestAPIController.testRestAPIPost();
+
+
     }
     catch(Exception ex)
     {

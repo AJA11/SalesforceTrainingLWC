@@ -30,8 +30,8 @@ public class HttpRequestRestAPIController {
     }
  
     
-    
-    public static HttpResponse testRestAPIPost()
+    @future(Callout=true)
+    public static Void testRestAPIPost()
     {
         Http http=new Http();
         HttpRequest requestApi=new HttpRequest();
@@ -46,7 +46,7 @@ public class HttpRequestRestAPIController {
         {
             System.debug(response.getBody());
         }
-        return response;
+        //return response;
         
     }
  
