@@ -1,7 +1,7 @@
 public class HttpRequestRestAPIController {
     
     
-    public static void testRestAPIGet()
+    public static HttpResponse testRestAPIGet()
     {
         Http http=new Http();
         HttpRequest requestApi=new HttpRequest();
@@ -25,12 +25,13 @@ public class HttpRequestRestAPIController {
                         System.debug(result.get('trailhead'));
 
         }
-        
+        return response;
+
     }
  
     
     
-    public static void testRestAPIPost()
+    public static HttpResponse testRestAPIPost()
     {
         Http http=new Http();
         HttpRequest requestApi=new HttpRequest();
@@ -45,6 +46,7 @@ public class HttpRequestRestAPIController {
         {
             System.debug(response.getBody());
         }
+        return response;
         
     }
  
