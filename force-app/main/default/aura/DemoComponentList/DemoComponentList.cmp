@@ -1,0 +1,16 @@
+<aura:component controller="GetRecordDataController" implements="flexipage:availableForAllPageTypes,force:hasRecordId" access="global">
+    <aura:attribute name="accounts" type="List" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.myAction}" />
+
+    <lightning:card title="Accounts">
+        <aura:iteration items="{!v.accounts}" var="account">
+            <p>
+                <lightning:formattedText value="{!account.Name}" label="Name" />
+            </p>
+            <p>
+                <lightning:formattedText value="{!account.Phone}" label="Phone" />
+            </p>
+        </aura:iteration>
+    </lightning:card>
+</aura:component>

@@ -25,6 +25,29 @@ public with sharing class GetRecordDataController
     }
 
 
+    @AuraEnabled
+    public static List<Account> getAccountDataAuraComponent(String recordId)
+    {
+        List<Account> getRecord=[SELECT  Id,Name,Phone FROM Account WHERE Id=:recordId LIMIT 1];
+
+
+        return getRecord;
+
+    }
+
+
+    
+    @AuraEnabled
+    public static List<Account> getAccountDataAuraComponenList()
+    {
+        List<Account> getRecord=[SELECT  Id,Name,Phone FROM Account];
+
+
+        return getRecord;
+
+    }
+
+
 
     @AuraEnabled
     public static void databaseInserMethod()
