@@ -1,0 +1,78 @@
+<template>
+    <lightning-card title="Download File Section">
+        <p>Please Select Object to Download and Upload File</p>
+        <lightning-combobox name="objectName" value={listofobject} placeholder="Select Object" options={options}
+            onchange={handleChange}>
+        </lightning-combobox>
+        <template if:true={IsEventAttendeeselected}>
+            <template for:each={filesList} for:item="file">
+                <div key={file.value} class="slds-box">
+                    <div class="slds-grid slds-wrap">
+                      <!--  <div class="slds-col slds-large-size_4-of-12 slds-medium-size_4-of-12 slds-size_12-of-12">
+                            <p><strong>FileName - </strong>{file.label}</p>
+                        </div> -->
+                        <div class="slds-col slds-large-size_4-of-12 slds-medium-size_4-of-12 slds-size_12-of-12">
+                            <a href={file.url} download><lightning-icon icon-name="action:download"
+                                    alternative-text="Download" title="Download"></lightning-icon></a>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </template>
+            <div class="slds-box slds-theme_default">
+                <h2 class="slds-text-heading_medium">Upload Files</h2>
+
+            </div>
+            <div class="slds-m-bottom_large">
+                <lightning-file-upload label="Upload CSV File" accept=".csv"
+                    onuploadfinished={handleUploadFinished}>
+                </lightning-file-upload>
+            </div>
+
+        </template>
+        <lightning-card title="CSV Data Preview" icon-name="custom:custom14">
+            <lightning-datatable
+                key-field="id"
+                data={previewData}
+                columns={columns}
+                hide-checkbox-column="true"
+                max-row-selection="1">
+            </lightning-datatable>
+						<div class="slds-m-top_medium">
+								<lightning-button label = "Confirm Upload"  variant="brand"
+																	onclick={validateColumns} class="slds-m-right_small"></lightning-button>
+								<lightning-button label ="Cancel" variant="neutral"
+																	onclick={handleCancelUpload}></lightning-button>
+								</div>
+				
+        </lightning-card>
+
+    </lightning-card>
+
+
+    <template if:true={showModalConfirmation}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCancelUpload}>
+                        <lightning-icon icon-name="utility:close" alternative-text="Close" size="small"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 class="slds-text-heading_medium">Confirm Upload</h2>
+                </header>
+                <lightning-spinner alternative-text="Loading" size="xx-small" lwc:if={dataLoader}></lightning-spinner>
+
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p>Are you sure you want proceed with {objectLabel} record creation?</p>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="neutral" label="Cancel" onclick={handleCancelUpload} class="slds-m-right_small"></lightning-button>
+                    <lightning-button variant="brand" label="Confirm" onclick={processFileUpload}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>
