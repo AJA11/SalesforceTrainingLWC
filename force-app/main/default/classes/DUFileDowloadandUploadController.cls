@@ -98,7 +98,7 @@ public class DUFileDowloadandUploadController {
      * @return A string response from the insert operation.
      */
     @AuraEnabled
-    public static String readExcelThenInsertData(String documentId,String objectName,String objectLabel) {
+    public static String readExcelThenInsertData(String documentId, String objectName, String objectLabel) {
         // Fetch the file content as a string.
         String fileDataString = getFileContent(documentId);
         
@@ -106,12 +106,13 @@ public class DUFileDowloadandUploadController {
         fileDataString = fileDataString.replaceAll('[^\\x00-\\x7F]', '');
         
         // Convert the cleaned CSV data to JSON format.
-        Map<String, List<Map<String, String>>> jsonData = convertCSVtoJSON(fileDataString);
+       convertCSVtoJSON(fileDataString,objectName,objectLabel);
         
-        // Insert the JSON data into the custom object 'Event_Attendee_vod__c' and return the result.
-        return InsertDateEmailController.insertIntoCustomObject(objectName, jsonData,objectLabel);
+        // Process the JSON data asynchronously
+        
+        // Return success message
+        return 'Success';
     }
-
     /**
      * This method converts CSV data into JSON format.
      * It processes each line of the CSV, maps header columns to field values, 
@@ -120,56 +121,70 @@ public class DUFileDowloadandUploadController {
      * @param csv The CSV data as a string.
      * @return A map containing the processed JSON data and the original CSV data as JSON.
      */
-    public static Map<String, List<Map<String, String>>> convertCSVtoJSON(String csv) {
+    @future
+    public static void convertCSVtoJSON(String csv,String objectName, String objectLabel) {
         List<Map<String, String>> jsonList = new List<Map<String, String>>();
         List<Map<String, String>> originalJsonList = new List<Map<String, String>>();
         
-        // Split the CSV into lines.
         List<String> lines = csv.split('\n');
-        
-        // Extract headers from the first line of the CSV.
         List<String> headers = parseCSVLine(lines[0]);
-
-        // Process each subsequent line in the CSV.
+        
+        // Prepare sets to collect unique values for lookup
+        Set<String> accountIds = new Set<String>();
+        Set<String> medicalEventNumbers = new Set<String>();
+        
         for (Integer i = 1; i < lines.size(); i++) {
-            Map<String, String> recordMap = new Map<String, String>();
-            Map<String, String> originalRecordMap = new Map<String, String>();
-
-            // Split the line into individual fields.
             List<String> record = parseCSVLine(lines[i]);
-
-            // Map each header to its corresponding field value.
             for (Integer j = 0; j < headers.size(); j++) {
                 String header = headers[j];
                 String fieldValue = record[j];
-
-                // Check for specific fields that require lookup to related objects.
+                
                 if (header == 'Account _Local_Data_Provider_id') {
-                    recordMap.put(header, getLookupId('Account', 'Cegedim_ID__c', fieldValue));
+                    accountIds.add(fieldValue);
                 } else if (header == 'Medical_Event_number') {
-                    recordMap.put(header, getLookupId('Medical_Event_vod__c', 'CMS_Event_Number__c', fieldValue));
-                    System.debug(recordMap);
+                    medicalEventNumbers.add(fieldValue);
+                }
+            }
+        }
+        
+        // Perform the lookup queries in batch
+        Map<String, Id> accountIdMap = getLookupIds('Account', 'Cegedim_ID__c', accountIds);
+        Map<String, Id> medicalEventMap = getLookupIds('Medical_Event_vod__c', 'CMS_Event_Number__c', medicalEventNumbers);
+        
+        // Re-process the lines to build the JSON list
+        for (Integer i = 1; i < lines.size(); i++) {
+            Map<String, String> recordMap = new Map<String, String>();
+            Map<String, String> originalRecordMap = new Map<String, String>();
+            
+            List<String> record = parseCSVLine(lines[i]);
+            
+            for (Integer j = 0; j < headers.size(); j++) {
+                String header = headers[j];
+                String fieldValue = record[j];
+                
+                if (header == 'Account _Local_Data_Provider_id') {
+                    recordMap.put(header, accountIdMap.get(fieldValue));
+                } else if (header == 'Medical_Event_number') {
+                    recordMap.put(header, medicalEventMap.get(fieldValue));
                 } else {
                     recordMap.put(header, fieldValue);
                 }
-
-                // Store the original field value as well.
+                
                 originalRecordMap.put(header, fieldValue);
             }
-
-            // Add the processed and original records to their respective lists.
+            
             jsonList.add(recordMap);
             originalJsonList.add(originalRecordMap);
         }
-
-        // Create a result map containing both processed and original JSON data.
+        
         Map<String, List<Map<String, String>>> result = new Map<String, List<Map<String, String>>>();
         result.put('jsonList', jsonList);
         result.put('originalJsonList', originalJsonList);
+        
+        EnqueueJobController.enqueueJobForProcessing(result, objectLabel, objectName);
 
-        return result;
+        // return result;
     }
-
     /**
      * This method parses a single line of CSV data into individual fields.
      * It handles cases where fields may contain commas enclosed in quotes.
@@ -203,24 +218,30 @@ public class DUFileDowloadandUploadController {
      * @param fieldValue The value to search for in the specified field.
      * @return The ID of the found record, or the original field value if no match is found.
      */
-    private static Id getLookupId(String objectName, String fieldName, String fieldValue) {
-        try {
-            // Query the related object to get the ID based on the provided field and value
-            String query = 'SELECT Id FROM ' + objectName + ' WHERE ' + fieldName + ' = :fieldValue LIMIT 1';
-            List<SObject> record = Database.query(query);
-    
-            if (record.size() > 0) {
-                return (Id) record[0].get('Id');
-            }
-            // Return fieldValue if no record is found
-            return fieldValue;
-        } catch (Exception e) {
-            // Log the error and return the fieldValue instead of throwing an exception
-            System.debug('Error in lookup query: ' + e.getMessage());
-            // return fieldValue;
-        }
-        return null;
+   // Helper method to perform bulk lookups
+   private static Map<String, Id> getLookupIds(String objectName, String fieldName, Set<String> fieldValues) {
+    Map<String, Id> lookupMap = new Map<String, Id>();
+
+    if (fieldValues.isEmpty()) {
+        return lookupMap;
     }
+
+    // Query the database for records matching the field values
+    String query = 'SELECT ' + fieldName + ', Id FROM ' + objectName + ' WHERE ' + fieldName + ' IN :fieldValues';
+    for (SObject record : Database.query(query)) {
+        lookupMap.put((String)record.get(fieldName), (Id)record.get('Id'));
+    }
+
+    // Add null entries for any field values that did not have a matching record
+    for (String fieldValue : fieldValues) {
+        if (!lookupMap.containsKey(fieldValue)) {
+            lookupMap.put(fieldValue, null);
+        }
+    }
+
+    return lookupMap;
+}
+
     
     
     public static string getExcelRecordId (String objectLabel)

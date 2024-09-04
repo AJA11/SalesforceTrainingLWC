@@ -100,7 +100,7 @@ export default class Lwc_dataupload extends LightningElement {
                     fieldName: header
                 });
             });
-            for (let i = 1; i < lines.length && i <= 10; i++) { // Limit to 10 records for preview 
+            for (let i = 1; i < lines.length && i <= 50; i++) { // Limit to 10 records for preview 
                 const obj = {
                     id: i
                 }; // Add a unique id for the key field 

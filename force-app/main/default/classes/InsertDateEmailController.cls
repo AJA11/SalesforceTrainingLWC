@@ -34,7 +34,7 @@ public with sharing class InsertDateEmailController {
      * @param jsonMap A map containing the JSON data to be inserted.
      * @return A CSV string of the insertion results.
      */
-    public static String insertIntoCustomObject(String objectName, Map<String, List<Map<String, String>>> jsonMap,String objectLabel) {
+    public static List<Map<String, Object>> insertIntoCustomObject(String objectName, Map<String, List<Map<String, String>>> jsonMap,String objectLabel) {
         List<SObject> recordsToInsert = new List<SObject>();
         List<SObject> recordsToSkip = new List<SObject>();
         List<Map<String, Object>> results = new List<Map<String, Object>>();
@@ -101,8 +101,8 @@ public with sharing class InsertDateEmailController {
                 }
             }
 
-            // Send email with CSV attachment and return the CSV content as a string
-            return sendEmailWithCSVAttachment(results,objectLabel);
+            return results;
+
 
         } catch (Exception ex) {
             System.debug('Error: ' + ex.getMessage());
@@ -132,120 +132,122 @@ public with sharing class InsertDateEmailController {
         }
         return new Map<String, String>();
     }
-    /**
-     * Sends an email with a CSV attachment containing the results of the insert operation.
-     *
-     * @param data The list of maps containing the insertion results.
-     * @return The CSV content as a string.
-     */
-    public static String sendEmailWithCSVAttachment(List<Map<String, Object>> data,String objectLabel) {
-        Integer successCount = 0;
-        Integer failCount = 0;
-        Integer totalRecord = 0;
-    String currentUserName=UserInfo.getName();
-    String currenUserId=UserInfo.getUserId();
-    String description;
-        List<String> headersToRemove = new List<String>{'Id', 'record', 'Status', 'Error'};
-        Set<String> headerSet = new Set<String>();
+
+    //Make this Code Asynchronous
+    // /**
+    //  * Sends an email with a CSV attachment containing the results of the insert operation.
+    //  *
+    //  * @param data The list of maps containing the insertion results.
+    //  * @return The CSV content as a string.
+    //  */
+    // public static void sendEmailWithCSVAttachment(List<Map<String, Object>> data,String objectLabel) {
+    //     Integer successCount = 0;
+    //     Integer failCount = 0;
+    //     Integer totalRecord = 0;
+    // String currentUserName=UserInfo.getName();
+    // String currenUserId=UserInfo.getUserId();
+    // String description;
+    //     List<String> headersToRemove = new List<String>{'Id', 'record', 'Status', 'Error'};
+    //     Set<String> headerSet = new Set<String>();
     
-        // Collect all headers from the data set
-        for (Map<String, Object> record : data) {
-            headerSet.addAll(record.keySet());
-            Map<String, String> innerRecord = (Map<String, String>) record.get('record');
-            headerSet.addAll(innerRecord.keySet());
-        }
-        headerSet.removeAll(headersToRemove);
+    //     // Collect all headers from the data set
+    //     for (Map<String, Object> record : data) {
+    //         headerSet.addAll(record.keySet());
+    //         Map<String, String> innerRecord = (Map<String, String>) record.get('record');
+    //         headerSet.addAll(innerRecord.keySet());
+    //     }
+    //     headerSet.removeAll(headersToRemove);
     
-        List<String> header = new List<String>(headerSet);
-        header.add('Status');
-        header.add('Error');
+    //     List<String> header = new List<String>(headerSet);
+    //     header.add('Status');
+    //     header.add('Error');
     
-        // Initialize CSV content for success and error records
-        String successCsvContent = String.join(header, ',') + '\n';
-        String errorCsvContent = String.join(header, ',') + '\n';
+    //     // Initialize CSV content for success and error records
+    //     String successCsvContent = String.join(header, ',') + '\n';
+    //     String errorCsvContent = String.join(header, ',') + '\n';
     
-        for (Map<String, Object> record : data) {
-            List<String> row = new List<String>();
-            for (String headerElement : header) {
-                Object value = record.get(headerElement);
-                if (value == null) {
-                    Map<String, String> innerRecord = (Map<String, String>) record.get('record');
-                    value = innerRecord.get(headerElement);
-                }
-                row.add('"' + String.valueOf(value) + '"');
-            }
+    //     for (Map<String, Object> record : data) {
+    //         List<String> row = new List<String>();
+    //         for (String headerElement : header) {
+    //             Object value = record.get(headerElement);
+    //             if (value == null) {
+    //                 Map<String, String> innerRecord = (Map<String, String>) record.get('record');
+    //                 value = innerRecord.get(headerElement);
+    //             }
+    //             row.add('"' + String.valueOf(value) + '"');
+    //         }
     
-            String status = (String) record.get('Status');
-            if (status == 'Success') {
-                successCsvContent += String.join(row, ',') + '\n';
-                successCount++;
-            } else if (status == 'Fail') {
-                errorCsvContent += String.join(row, ',') + '\n';
-                failCount++;
-            }
-        }
-        totalRecord = successCount + failCount;
-        description = 'This is with reference to Data upload activity which has been performed by '+currentUserName+' for object '
-        + objectLabel 
-        + ' has been completed successfully. Error and success file can be found in attachment.\n'
-        + 'Here is the Summary-\n'
-        + 'Total Records: ' + totalRecord + '\n'
-        + 'Success Records: ' + successCount + '\n'
-        + 'Fail Records: ' + failCount;
-        // Create a DataUpload record
-        Data_Upload__c dataUploadRecord = new Data_Upload__c(
-            Name = 'Data Upload on ' +objectLabel,
-            RecordTypeId=getRecordTypeId('Data Upload Process Information'),
-            Requester__c=currenUserId,
-            Description__c=description
-            );
-        insert dataUploadRecord;
+    //         String status = (String) record.get('Status');
+    //         if (status == 'Success') {
+    //             successCsvContent += String.join(row, ',') + '\n';
+    //             successCount++;
+    //         } else if (status == 'Fail') {
+    //             errorCsvContent += String.join(row, ',') + '\n';
+    //             failCount++;
+    //         }
+    //     }
+    //     totalRecord = successCount + failCount;
+    //     description = 'This is with reference to Data upload activity which has been performed by '+currentUserName+' for object '
+    //     + objectLabel 
+    //     + ' has been completed successfully. Error and success file can be found in attachment.\n'
+    //     + 'Here is the Summary-\n'
+    //     + 'Total Records: ' + totalRecord + '\n'
+    //     + 'Success Records: ' + successCount + '\n'
+    //     + 'Fail Records: ' + failCount;
+    //     // Create a DataUpload record
+    //     Data_Upload__c dataUploadRecord = new Data_Upload__c(
+    //         Name = 'Data Upload on ' +objectLabel,
+    //         RecordTypeId=getRecordTypeId('Data Upload Process Information'),
+    //         Requester__c=currenUserId,
+    //         Description__c=description
+    //         );
+    //     insert dataUploadRecord;
     
-        // Save CSVs as files in the DataUpload custom object
-        saveCsvAsFile(dataUploadRecord.Id, 'SuccessLogFile.csv', successCsvContent);
-        saveCsvAsFile(dataUploadRecord.Id, 'ErrorLogFile.csv', errorCsvContent);
+    //     // Save CSVs as files in the DataUpload custom object
+    //     saveCsvAsFile(dataUploadRecord.Id, 'SuccessLogFile.csv', successCsvContent);
+    //     saveCsvAsFile(dataUploadRecord.Id, 'ErrorLogFile.csv', errorCsvContent);
     
-        // Send an email with both CSV attachments
-        List<String> testEmailAddress = new List<String>{'Varsha.mahore@pfizer.com'};
-        Messaging.EmailFileAttachment successCsvAttachment = createEmailAttachment('SuccessLogFile.csv', successCsvContent);
-        Messaging.EmailFileAttachment errorCsvAttachment = createEmailAttachment('ErrorLogFile.csv', errorCsvContent);
+    //     // Send an email with both CSV attachments
+    //     List<String> testEmailAddress = new List<String>{'Varsha.mahore@pfizer.com'};
+    //     Messaging.EmailFileAttachment successCsvAttachment = createEmailAttachment('SuccessLogFile.csv', successCsvContent);
+    //     Messaging.EmailFileAttachment errorCsvAttachment = createEmailAttachment('ErrorLogFile.csv', errorCsvContent);
     
-        Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-        mail.setSubject('CSV Files');
-        mail.setToAddresses(testEmailAddress);
-        // String emailBody = 'Hi User,\n\n' + 'Please find below the details of data uploaded.\n\n' +
-        //     'Total Records: ' + totalRecord + '\n' +
-        //     'Success Records: ' + successCount + '\n' +
-        //     'Fail Records: ' + failCount;
-        mail.setPlainTextBody(description);
-        mail.setFileAttachments(new Messaging.EmailFileAttachment[]{successCsvAttachment, errorCsvAttachment});
-        Messaging.sendEmail(new Messaging.SingleEmailMessage[]{mail});
+    //     Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+    //     mail.setSubject('CSV Files');
+    //     mail.setToAddresses(testEmailAddress);
+    //     // String emailBody = 'Hi User,\n\n' + 'Please find below the details of data uploaded.\n\n' +
+    //     //     'Total Records: ' + totalRecord + '\n' +
+    //     //     'Success Records: ' + successCount + '\n' +
+    //     //     'Fail Records: ' + failCount;
+    //     mail.setPlainTextBody(description);
+    //     mail.setFileAttachments(new Messaging.EmailFileAttachment[]{successCsvAttachment, errorCsvAttachment});
+    //     Messaging.sendEmail(new Messaging.SingleEmailMessage[]{mail});
     
-        return 'Email sent with CSV attachments.';
-    }
+    //     // return 'Email sent with CSV attachments.';
+    // }
     
-    private static Messaging.EmailFileAttachment createEmailAttachment(String fileName, String csvContent) {
-        Messaging.EmailFileAttachment csvAttachment = new Messaging.EmailFileAttachment();
-        Blob csvBlob = Blob.valueOf(csvContent);
-        csvAttachment.setFileName(fileName);
-        csvAttachment.setBody(csvBlob);
-        return csvAttachment;
-    }
+    // private static Messaging.EmailFileAttachment createEmailAttachment(String fileName, String csvContent) {
+    //     Messaging.EmailFileAttachment csvAttachment = new Messaging.EmailFileAttachment();
+    //     Blob csvBlob = Blob.valueOf(csvContent);
+    //     csvAttachment.setFileName(fileName);
+    //     csvAttachment.setBody(csvBlob);
+    //     return csvAttachment;
+    // }
     
-    private static void saveCsvAsFile(Id dataUploadId, String fileName, String csvContent) {
-        ContentVersion cv = new ContentVersion();
-        cv.Title = fileName;
-        cv.PathOnClient = fileName;
-        cv.VersionData = Blob.valueOf(csvContent);
-        insert cv;
+    // private static void saveCsvAsFile(Id dataUploadId, String fileName, String csvContent) {
+    //     ContentVersion cv = new ContentVersion();
+    //     cv.Title = fileName;
+    //     cv.PathOnClient = fileName;
+    //     cv.VersionData = Blob.valueOf(csvContent);
+    //     insert cv;
     
-        ContentDocumentLink cdl = new ContentDocumentLink();
-        cdl.ContentDocumentId = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1].ContentDocumentId;
-        cdl.LinkedEntityId = dataUploadId;
-        cdl.ShareType = 'I';
-        cdl.Visibility = 'AllUsers';
-        insert cdl;
-    }
+    //     ContentDocumentLink cdl = new ContentDocumentLink();
+    //     cdl.ContentDocumentId = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id LIMIT 1].ContentDocumentId;
+    //     cdl.LinkedEntityId = dataUploadId;
+    //     cdl.ShareType = 'I';
+    //     cdl.Visibility = 'AllUsers';
+    //     insert cdl;
+    // }
     
 
 
