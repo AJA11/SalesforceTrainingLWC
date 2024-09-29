@@ -155,32 +155,50 @@ export default class Lwc_dataupload extends LightningElement {
         this.showModalConfirmation=false;
     }
     validateColumns() {
+        if(this.objectName!=null ){
         getFieldMappings({ objectName: this.objectName })
         .then((fieldMappings) => {
             // Extract the keys (labels) from the fieldMappings
             const requiredColumns = Object.keys(fieldMappings);
-            
+                console.log(requiredColumns);
+                console.log(this.columns);
+
             // Check for missing columns
             const missingColumns = requiredColumns.filter(column => 
                 !this.columns.some(col => col.fieldName.trim() === column.trim())
             );
 
+            if(this.columns.length==0)
+                {
+                    return this.showToast('Error','Upload File First','error')
+                }
            
             if(missingColumns.length === 0)
             {
-                this.showModalConfirmation=true;
+                
+                        this.showModalConfirmation=true;
+
+                    
+                   
 
             }else
             {
 
                 this.showToast('Error','Column not Matching','error');
             }
+
+            
         })
         .catch((error) => {
             console.error('Error fetching field mappings:', error);
             return false;
         });
+    }
+        else
+        {
+            this.showToast('Error','Select Object First','error');
 
+        }
     }
     
     createEventAttendee(csvData) {
@@ -207,6 +225,7 @@ export default class Lwc_dataupload extends LightningElement {
     
     processFileUpload()
     {
+        
         this.dataLoader=true;
         readExcelThenInsertData({documentId:this.documentId,objectName:this.objectName,objectLabel:this.objectLabel}).then(result=>{
             console.log(result);
@@ -216,8 +235,9 @@ export default class Lwc_dataupload extends LightningElement {
 
             this.handleCancelUpload();
             })
-    }
-
+    
+    
+}
        
 
         }
